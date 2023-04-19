@@ -17,9 +17,12 @@ def hello(s):
     return 1 if b'Hello\r\n' in response else 0
 
 def chooseFile():
+    root = tkinter.Tk()
+
     tkinter.Tk().withdraw() # prevents an empty tkinter window from appearing
 
     file_path = filedialog.askopenfilename()
+
     return file_path
 
 def choose(s):
@@ -68,8 +71,8 @@ def main():
             print('Declined by the server')
             sys.exit(1)
 
-        root = tkinter.Tk()
-        root.withdraw()
+        print('Test')
+
 
         choose(s)
 
@@ -77,8 +80,7 @@ main()
 
 """
 TODO
-1. Dokończyć funkcję choose
-2. 
+1. Dodać tkinter'a
 
 
 """
