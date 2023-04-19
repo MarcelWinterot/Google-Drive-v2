@@ -4,7 +4,7 @@ from tkinter import filedialog
 import sys
 import os
 
-ip = '192.168.88.126'
+ip = '127.0.0.1'
 port = 5000
 
 def hello(s):

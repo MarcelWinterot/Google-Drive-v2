@@ -2,7 +2,7 @@ import socket
 import os
 import zipfile
 
-host = '192.168.88.126'
+host = '127.0.0.1'
 port = 5000
 
 
@@ -42,7 +42,7 @@ def add(size):
     print(f"File name: {name.decode().strip()}")
     file_size = int(size)
 
-    with open(f'{addr[0]}/{name.decode().strip()}', 'wb') as f:
+    with open(f'storedFolders/{addr[0]}/{name.decode().strip()}', 'wb') as f:
         bytes_received = 0
         while bytes_received < file_size:
             data = client.recv(min(file_size - bytes_received, 1024))
@@ -66,12 +66,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         client, addr = s.accept()
         hello(client)
-        with open('addr.txt', 'r') as f:
+        with open('source code/addr.txt', 'r') as f:
             users = f.readlines()
             if f'{addr[0]}\n' not in users:
                 with open('addr.txt', 'a') as f:
                     f.write(f'{addr[0]}\n')
-                os.mkdir(f'{addr[0]}')
+                os.mkdir(f'storedFolders/{addr[0]}')
 
         param = client.recv(1).decode()
 
