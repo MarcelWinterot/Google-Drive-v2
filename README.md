@@ -4,5 +4,5 @@
 ### Tomek - Server
 
 TODO:
-1. Add FLASK
+1. Add gui
 2. Add documentation
