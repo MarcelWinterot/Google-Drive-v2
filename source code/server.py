@@ -1,27 +1,77 @@
 import socket
 import os
 import zipfile
+from config import getData
 
 host = '127.0.0.1'
 port = 5000
 
+"""
+from Crypto.Cipher import AES
+import binascii
+
+key = 'e08af43a03090ab2c9df32e85a494261'
+
+def encryptPassword(key, message):
+    cipher = AES.new(binascii.unhexlify(key), AES.MODE_ECB)
+    padded_message = message + (AES.block_size - len(message) % AES.block_size) * chr(AES.block_size - len(message) % AES.block_size)
+    ciphertext = cipher.encrypt(padded_message.encode('utf-8'))
+    return ciphertext
+
+zrobilem to ale wyskakuje zbyt duzo bledow, naprawie kiedys
+"""
+
+
+def confirmLogin(mail, password):
+    with open('source code/users.txt', 'r') as f:
+        usersAndPasswords = f.readlines()
+    for user in usersAndPasswords:
+        user = user.split()
+        if mail == user[0]:
+            if password == user[1]:
+                print("y")
+                return 1, mail
+            else:
+                return 0, mail
+    return 0, mail
+
+def createAccount(mail, password):
+    with open('source code/users.txt', 'r') as f:
+        usersAndPasswords = f.readlines()
+    if mail in usersAndPasswords:
+        isAlreadyIn = True
+    else:
+        isAlreadyIn = False
+
+    if not isAlreadyIn:
+        with open('source code/users.txt', 'a') as f:
+            f.write(f'{mail} {password}\n')
+        os.mkdir(f'storedFolders/{mail}')
+        return 1, mail
+    else:
+        return 0, mail
 
 def hello(s):
-    name = b''
-    while b'\r\n\r\n' not in name:
-        name += s.recv(1)
-    name = name.decode().strip()
+    name = getData(s)
     print(name)
     s.sendall(f'Hello\r\n{name}\r\n\r\n'.encode())
+    param = getData(s)
+    mail = getData(s)
+    password = getData(s)
+    if param == '1':
+        return createAccount(mail, password)
+    elif param == '2':
+        return confirmLogin(mail, password)
+    else:
+        s.close()
+        return 0, mail
+
 
 def download(folder_name):
+    folder_name = f'storedFolders/{folder_name}'
     with zipfile.ZipFile(f'{folder_name}.zip', 'w') as zip:
         for file in os.listdir(folder_name):
             zip.write(f'{folder_name}/{file}')
-
-    file_size = os.path.getsize(f'{folder_name}.zip')
-
-    client.sendall(str(file_size).encode())
 
     with open(f'{folder_name}.zip', 'rb') as f:
         data = f.read()
@@ -32,17 +82,14 @@ def download(folder_name):
     client.close()
 
 
-def add(size):
-    data = b''
+def add(size, folder_name):
+    folder_name = f'storedFolders/{folder_name}'
+    name = getData(client)
 
-    name = b''
-
-    while b'\r\n\r\n' not in name:
-        name += client.recv(1)
-    print(f"File name: {name.decode().strip()}")
+    print(f"File name: {name}")
     file_size = int(size)
 
-    with open(f'storedFolders/{addr[0]}/{name.decode().strip()}', 'wb') as f:
+    with open(f'{folder_name}/{name}', 'wb') as f:
         bytes_received = 0
         while bytes_received < file_size:
             data = client.recv(min(file_size - bytes_received, 1024))
@@ -65,23 +112,22 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
     while True:
         client, addr = s.accept()
-        hello(client)
-        with open('source code/users.txt', 'r') as f:
-            users = f.readlines()
-            if f'{addr[0]}\n' not in users:
-                with open('source code/users.txt', 'a') as f:
-                    f.write(f'{addr[0]}\n')
-                os.mkdir(f'storedFolders/{addr[0]}')
+        print('Connected by', addr)
+        case, mail = hello(client)
+        if case == 1:
+            client.sendall('1\r\n\r\n'.encode())
+        else:
+            client.sendall('0\r\n\r\n'.encode())
+            client.close()
+            continue
 
-        param = client.recv(1).decode()
+        param = client.recv(1).decode() #Użyliśmy tu recv bez pętli, ponieważ wysyłamy tylko jeden bajt
 
         if param == '1':
-            size = client.recv(10).decode().strip()
+            size = getData(client)
             print(f"File size: {size}")
-            add(size)
+            add(size, mail)
         elif param == '2':
-            download(addr[0])
+            download(mail)
         else:
             raise Exception('Invalid option')
-
-        print('Connected by', addr)

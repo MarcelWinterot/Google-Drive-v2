@@ -3,18 +3,23 @@ import tkinter
 from tkinter import filedialog
 import sys
 import os
+from config import getData
 
 ip = '127.0.0.1'
 port = 5000
 
 def hello(s):
     name = input('What is your name? ')
-    s.send(f'Hello\r\n{name}\r\n\r\n'.encode())
-    response = b''
-    while b'\r\n\r\n' not in response:
-        response += s.recv(128)
-
-    return 1 if b'Hello\r\n' in response else 0
+    s.sendall(f'Hello\r\n{name}\r\n\r\n'.encode())
+    response = getData(s)
+    param = input('Do you want to create an account - 1 or login - 2? ')
+    s.sendall(f'{param}\r\n\r\n'.encode())
+    email = input('What is your email? ')
+    password = input('What is your password? ')
+    s.sendall(f'{email}\r\n\r\n'.encode())
+    s.sendall(f'{password}\r\n\r\n'.encode())
+    response = getData(s)
+    return 1 if response == '1' else 0
 
 def chooseFile():
     root = tkinter.Tk()
