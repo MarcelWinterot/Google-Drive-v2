@@ -82,11 +82,4 @@ main()
 TODO
 1. Dodać tkinter'a
 
-
 """
-
-# with open('addr.txt', 'r') as f:
-#     users = f.readlines()
-#     if ip not in users:
-#         with open('addr.txt', 'w') as f:
-#             f.write(ip + '

@@ -66,10 +66,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     while True:
         client, addr = s.accept()
         hello(client)
-        with open('source code/addr.txt', 'r') as f:
+        with open('source code/users.txt', 'r') as f:
             users = f.readlines()
             if f'{addr[0]}\n' not in users:
-                with open('addr.txt', 'a') as f:
+                with open('source code/users.txt', 'a') as f:
                     f.write(f'{addr[0]}\n')
                 os.mkdir(f'storedFolders/{addr[0]}')
 
