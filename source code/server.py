@@ -53,7 +53,6 @@ def createAccount(mail, password):
 
 def hello(s):
     name = getData(s)
-    print(name)
     s.sendall(f'Hello\r\n{name}\r\n\r\n'.encode())
     param = getData(s)
     mail = getData(s)
@@ -70,8 +69,6 @@ def download(folder_name):
     folder_name = f'storedFolders/{folder_name}'
     with zipfile.ZipFile(f'{folder_name}.zip', 'w') as zip:
         for file in os.listdir(f'{folder_name}'):
-            # print file path
-            print(f'{folder_name}/{file}')
             zip.write(f'{folder_name}/{file}')
 
     with open(f'{folder_name}.zip', 'rb') as f:
@@ -107,7 +104,6 @@ def add(size, folder_name):
 
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-
     s.bind((host, port))
     s.listen(1)
     print(f'Listening on port: {port}')
@@ -117,7 +113,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         client, addr = s.accept()
         print('Connected by', addr)
         case, mail = hello(client)
-        print(case)
         if case == 1:
             client.sendall('1\r\n\r\n'.encode())
         else:
