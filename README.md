@@ -12,7 +12,7 @@
 ## Introduction
 
 ### Project is built using socket library, customtkinter library and some other helpful libraries
-### Project is heavily inspired by google drive(more on that in Polciy section)
+### Project is heavily inspired by google drive(more on that in Policy section)
 
 ## Usage
 
@@ -364,13 +364,13 @@ def getData(s):
 ### Client:
 #### 1. Gets information from the user, like his name, mail and password, which it sends to the server
 #### 2. Gets information about which option did the user choose(upload or download files) and sends it to the server
-#### 3. If user selected upload, user selects a file from his pc, and client converts it to bytes and sends them to the server. 
-#### 3.5. If users selected download, users selectes a folder, to which the .zip fill will be downladed. Then recieves the file from the server, and saves it there
+#### 3a. If user selected upload, user selects a file from his pc, and client converts it to bytes and sends them to the server. 
+#### 3b. If users selected download, users selectes a folder, to which the .zip fill will be downladed. Then recieves the file from the server, and saves it there
 
 ### Server:
 #### 1. Gets mail and password from the client, and checks if it is correct, after which it gets information about selected option
-#### 2. If user selected upload, server gets the file size and file name and saves it like that,
-#### 2.5 If user selected download, server add the whole folder into a .zip file and sends it to the client
+#### 2a. If user selected upload, server gets the file size and file name and saves it like that,
+#### 2b. If user selected download, server add the whole folder into a .zip file and sends it to the client
 
 ### Config:
 #### 1. Just a shortened version of getting information from server or client
