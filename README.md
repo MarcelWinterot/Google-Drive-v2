@@ -4,5 +4,4 @@
 ### Tomek - Server
 
 TODO:
-1. Add gui
-2. Add documentation
+1. Add documentation
