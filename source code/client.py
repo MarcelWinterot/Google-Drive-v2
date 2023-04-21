@@ -19,15 +19,16 @@ def hello(s):
     s.sendall(f'{email}\r\n\r\n'.encode())
     s.sendall(f'{password}\r\n\r\n'.encode())
     response = getData(s)
-    return 1 if response == '1' else 0
+    return 1 if '1' in response else 0
 
-def chooseFile():
+def chooseFileOrFolder(option):
     root = tkinter.Tk()
 
     tkinter.Tk().withdraw() # prevents an empty tkinter window from appearing
-
-    file_path = filedialog.askopenfilename()
-
+    if option == '1':
+        file_path = filedialog.askopenfilename()
+    elif option == '2':
+        file_path = filedialog.askdirectory()
     return file_path
 
 def choose(s):
@@ -37,24 +38,18 @@ def choose(s):
     if option == '1':
         print('Wybrana opcja to 1')
         
-        file_path = chooseFile()
+        file_path = chooseFileOrFolder('1')
         file_size = os.path.getsize(file_path)
-        print(file_size)
         nazwa = file_path.split('/')[-1]
         s.sendall(f'{file_size}\r\n\r\n'.encode())
         s.sendall(f'{nazwa}\r\n\r\n'.encode())
-        print(nazwa)
-
 
         with open(file_path, 'rb') as file:
             s.sendall(bytes(file.read()))
 
     elif option == '2':
         print('Wybrana opcja to 2')
-        # Serwer wysyła plik .zip do clienta i client go odbiera i zapisuje w folderze
-        tkinter.Tk().withdraw() # prevents an empty tkinter window from appearing
-
-        folder_path = filedialog.askdirectory()
+        folder_path = chooseFileOrFolder('2')
 
         with open(f'{folder_path}/plik.zip', 'wb') as file:
             data = b''

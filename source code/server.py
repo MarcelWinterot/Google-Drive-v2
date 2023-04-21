@@ -6,21 +6,21 @@ from config import getData
 host = '127.0.0.1'
 port = 5000
 
-"""
-from Crypto.Cipher import AES
-import binascii
+# from Crypto.Cipher import AES
+# import binascii
 
-key = 'e08af43a03090ab2c9df32e85a494261'
+# key = 'e08af43a03090ab2c9df32e85a494261'
 
-def encryptPassword(key, message):
-    cipher = AES.new(binascii.unhexlify(key), AES.MODE_ECB)
-    padded_message = message + (AES.block_size - len(message) % AES.block_size) * chr(AES.block_size - len(message) % AES.block_size)
-    ciphertext = cipher.encrypt(padded_message.encode('utf-8'))
-    return ciphertext
+# def encryptPassword(key, message):
+#     cipher = AES.new(binascii.unhexlify(key), AES.MODE_ECB)
+#     padded_message = message + (AES.block_size - len(message) % AES.block_size) * chr(AES.block_size - len(message) % AES.block_size)
+#     ciphertext = cipher.encrypt(padded_message.encode('utf-8'))
+#     return ciphertext
 
-zrobilem to ale wyskakuje zbyt duzo bledow, naprawie kiedys
-"""
+import base64
 
+def encryptPassword(password):
+    return base64.b64encode(password.encode()).decode()
 
 def confirmLogin(mail, password):
     with open('source code/users.txt', 'r') as f:
@@ -28,8 +28,8 @@ def confirmLogin(mail, password):
     for user in usersAndPasswords:
         user = user.split()
         if mail == user[0]:
-            if password == user[1]:
-                print("y")
+            userPassword = user[1]
+            if encryptPassword(password) == userPassword:
                 return 1, mail
             else:
                 return 0, mail
@@ -45,7 +45,7 @@ def createAccount(mail, password):
 
     if not isAlreadyIn:
         with open('source code/users.txt', 'a') as f:
-            f.write(f'{mail} {password}\n')
+            f.write(f'{mail} {encryptPassword(password)}\n')
         os.mkdir(f'storedFolders/{mail}')
         return 1, mail
     else:
@@ -66,17 +66,20 @@ def hello(s):
         s.close()
         return 0, mail
 
-
 def download(folder_name):
     folder_name = f'storedFolders/{folder_name}'
     with zipfile.ZipFile(f'{folder_name}.zip', 'w') as zip:
-        for file in os.listdir(folder_name):
+        for file in os.listdir(f'{folder_name}'):
+            # print file path
+            print(f'{folder_name}/{file}')
             zip.write(f'{folder_name}/{file}')
 
     with open(f'{folder_name}.zip', 'rb') as f:
         data = f.read()
         client.sendall(data)
 
+    os.remove(f'{folder_name}.zip')
+    
     print('File sent')
 
     client.close()
@@ -114,6 +117,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         client, addr = s.accept()
         print('Connected by', addr)
         case, mail = hello(client)
+        print(case)
         if case == 1:
             client.sendall('1\r\n\r\n'.encode())
         else:
