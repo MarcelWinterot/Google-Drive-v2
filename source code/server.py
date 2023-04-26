@@ -120,7 +120,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             client.close()
             continue
 
-        param = client.recv(1).decode() #Użyliśmy tu recv bez pętli, ponieważ wysyłamy tylko jeden bajt
+        param = b''
+        while param == b'':
+            param += client.recv(1).decode()
 
         if param == '1':
             size = getData(client)
